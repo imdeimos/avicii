@@ -16,9 +16,8 @@ const Emojis = require("./config/Emojis.json");
 /** Settings handler. */
 const Settings = new (require("./lib/Settings.js"))();
 
-/** Constants. */
+/** Command prefix. */
 const PREFIX = Settings.get("PREFIX");
-const TOKEN = process.env.TOKEN;
 
 /** Queue system. */
 const Queue = new (require("./lib/Queue.js").Queue)();
@@ -111,4 +110,4 @@ Client.on("message", Message => {
 });
 
 /** Login the bot with all our events binded. */
-Client.login(TOKEN);
+Client.login(process.env.TOKEN);
