@@ -1,0 +1,38 @@
+{
+  "ANNOUNCE_PLAYING": {
+    "TYPE": "Boolean",
+    "VALUE": true
+  },
+  "DJ_ROLE": {
+    "TYPE": "String",
+    "NULLABLE": true,
+    "VALUE": null
+  },
+  "MAX_QUEUE_LENGTH": {
+    "TYPE": "Int",
+    "NULLABLE": true,
+    "RANGE": [1, 4294967295],
+    "VALUE": null
+  },
+  "PREFIX": {
+    "TYPE": "String",
+    "NULLABLE": false,
+    "VALUE": "&"
+  },
+  "TEXT_CHANNEL": {
+    "TYPE": "String",
+    "NULLABLE": true,
+    "VALUE": null
+  },
+  "VOICE_CHANNEL": {
+    "TYPE": "String",
+    "NULLABLE": true,
+    "VALUE": null
+  },
+  "VOLUME": {
+    "TYPE": "Int",
+    "NULLABLE": false,
+    "RANGE": [0, 200],
+    "VALUE": 100
+  }
+}

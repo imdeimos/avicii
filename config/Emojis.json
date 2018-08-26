@@ -1,0 +1,28 @@
+{
+  "FAILURE": ":x:",
+  "INFO": ":asterisk:",
+  "LINK": ":globe_with_meridians:",
+	"SUCCESS": ":white_check_mark:",
+	"WARNING": ":warning:",
+
+  "MUSIC_FORWARD": ":fast_forward:",
+	"MUSIC_LOOP": ":repeat:",
+	"MUSIC_LOOP_ONCE": ":repeat_one:",
+  "MUSIC_NOTES": ":musical_note:",
+	"MUSIC_PAUSE": ":pause_button:",
+	"MUSIC_PLAY": ":arrow_forward:",
+  "MUSIC_PREV": ":track_previous:",
+  "MUSIC_RESTART": ":arrows_counterclockwise:",
+  "MUSIC_REWIND": ":rewind:",
+	"MUSIC_SHUFFLE": ":twisted_rightwards_arrows:",
+	"MUSIC_SKIP": ":track_next:",
+	"MUSIC_STOP": ":stop_button:",
+
+	"SEARCH": ":mag_right:",
+	"LOADING": ":hourglass:",
+
+	"ACCESS_DENIED": ":no_entry:",
+	"SETTINGS": ":gear:",
+
+	"PING": ":ping_pong:"
+}
