@@ -5,16 +5,16 @@ module.exports = {
   name: "pause",
   desc: "Pauses the music.",
   args: [],
-  exec: ({Emojis, VoiceHandler}, Message, Args) => {
-    if (VoiceHandler.Voice._destroyed) {
-      VoiceHandler.Voice = null;
+  exec: ({Emojis, Voice}, Message, Args) => {
+    if (Voice.Handler._destroyed) {
+      Voice.Handler = null;
     }
     
-    if (!VoiceHandler.Voice) return Message.channel.send(`${Emojis.WARNING} The bot is not in a voice channel !`);
+    if (!Voice.Handler) return Message.channel.send(`${Emojis.WARNING} The bot is not in a voice channel !`);
   
-    if (VoiceHandler.Voice.isPaused()) return Message.channel.send(`${Emojis.WARNING} The music is already paused !`);
+    if (Voice.Handler.isPaused()) return Message.channel.send(`${Emojis.WARNING} The music is already paused !`);
   
-    VoiceHandler.Voice.pause();
+    Voice.Handler.pause();
     Message.channel.send(`${Emojis.MUSIC_PAUSE} **Paused**`);
   }
 }

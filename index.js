@@ -23,8 +23,8 @@ const PREFIX = Settings.get("PREFIX");
 const Queue = new (require("./lib/Queue.js").Queue)();
 
 /** Voice is an object, so that commands could use its properties. */
-let VoiceHandler = {
-  Voice: null
+let Voice = {
+  Handler: null
 };
 
 /**
@@ -106,7 +106,7 @@ Client.on("message", Message => {
   }
 
   /** Call command. */
-  Client.Commands.get(Name).exec({Client, Emojis, packageJSON, Queue, Settings, VoiceHandler}, Message, Args);
+  Client.Commands.get(Name).exec({Client, Emojis, packageJSON, Queue, Settings, Voice}, Message, Args);
 });
 
 /** Login the bot with all our events binded. */

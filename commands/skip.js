@@ -7,16 +7,16 @@ module.exports = {
   name: "skip",
   desc: "Skips one or more songs.",
   args: ["{Int} n = 1"],
-  exec: ({Emojis, Queue, VoiceHandler}, Message, [n = 1]) => {
+  exec: ({Emojis, Queue, Voice}, Message, [n = 1]) => {
     n = Number(n);
 
     if (isNaN(n)) return Message.channel.send(`${Emojis.FAILURE} **skip** expects an integer.`);
 
-    if (VoiceHandler.Voice._destroyed) {
-      VoiceHandler.Voice = null;
+    if (Voice.Handler._destroyed) {
+      Voice.Handler = null;
     }
 
-    if (!VoiceHandler.Voice) return Message.channel.send(`${Emojis.WARNING} The bot is not in a voice channel !`);
+    if (!Voice.Handler) return Message.channel.send(`${Emojis.WARNING} The bot is not in a voice channel !`);
 
     if (Queue.isEmpty()) return Message.channel.send(`${Emojis.WARNING} The queue is empty !`);
 
@@ -25,9 +25,9 @@ module.exports = {
     if (Math.abs(pos) >= Queue.length) {
       /** Out of queue boundaries. */
       Queue.clear();
-      VoiceHandler.Voice.destroy();
-      VoiceHandler.Voice = null;
-      return VoiceHandler.Voice.end() && Message.channel.send(`${Emojis.STOPPED} **Stopped**`);
+      Voice.Handler.destroy();
+      Voice.Handler = null;
+      return Voice.Handler.end() && Message.channel.send(`${Emojis.STOPPED} **Stopped**`);
     }
 
     if (pos < 0) pos += Queue.length;
@@ -43,6 +43,6 @@ module.exports = {
       Message.channel.send(`${Emojis.MUSIC_SKIP} **Skipped** ${n} songs`);
     }
 
-    VoiceHandler.Voice.end();
+    Voice.Handler.end();
   }
 }

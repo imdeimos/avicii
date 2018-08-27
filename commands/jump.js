@@ -7,7 +7,7 @@ module.exports = {
   name: "jump",
   desc: "Jumps to a position in the queue (stops current song).",
   args: ["{Int} pos"],
-  exec: ({Emojis, Queue, VoiceHandler}, Message, [pos]) => {
+  exec: ({Emojis, Queue, Voice}, Message, [pos]) => {
     /** Convert pos to Int. */
     pos = Number(pos);
 
@@ -15,20 +15,20 @@ module.exports = {
 
     if (len === 0) return Message.channel.send(`${Emojis.WARNING} The queue is empty !`);
 
-    if (VoiceHandler.Voice._destroyed) {
-      VoiceHandler.Voice = null;
+    if (Voice.Handler._destroyed) {
+      Voice.Handler = null;
     }
 
-    if (!VoiceHandler.Voice) {
+    if (!Voice.Handler) {
       return Message.channel.send(`${Emojis.WARNING} No song is playing !`);
     }
 
     if (Math.abs(pos) >= len) {
       /** Out of queue boundaries. */
       Queue.clear();
-      VoiceHandler.Voice.destroy();
-      VoiceHandler.Voice = null;
-      return VoiceHandler.Voice.end() && Message.channel.send(`${Emojis.STOPPED} **Stopped**`);
+      Voice.Handler.destroy();
+      Voice.Handler = null;
+      return Voice.Handler.end() && Message.channel.send(`${Emojis.STOPPED} **Stopped**`);
     }
 
     if (pos < 0) pos += len;
@@ -39,6 +39,6 @@ module.exports = {
     Message.channel.send(`:arrow_right: **Jumped** to position \`${pos}\` in queue`);
 
     /** Stops current song. */
-    VoiceHandler.Voice.end();
+    Voice.Handler.end();
   }
 }

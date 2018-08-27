@@ -7,12 +7,12 @@ module.exports = {
   name: "np",
   desc: "Show current playing song informations.",
   args: [],
-  exec: ({Emojis, Queue, VoiceHandler}, Message, Args) => {
-    if (VoiceHandler.Voice._destroyed) {
-      VoiceHandler.Voice = null;
+  exec: ({Emojis, Queue, Voice}, Message, Args) => {
+    if (Voice.Handler._destroyed) {
+      Voice.Handler = null;
     }
     
-    if (!VoiceHandler.Voice) return Message.channel.send(`${Emojis.WARNING} No song is playing !`);
+    if (!Voice.Handler) return Message.channel.send(`${Emojis.WARNING} No song is playing !`);
 
     const elem = Queue.current;
 

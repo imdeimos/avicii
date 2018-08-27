@@ -7,7 +7,7 @@ module.exports = {
   name: "remove",
   desc: "Removes a song from the queue.",
   args: ["{Int} pos"],
-  exec: ({Emojis, Queue, VoiceHandler}, Message, [pos]) => {
+  exec: ({Emojis, Queue, Voice}, Message, [pos]) => {
     pos = Number(pos);
 
     const len = Queue.length;

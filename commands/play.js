@@ -5,13 +5,13 @@ const createEmbed = require("../lib/Utils.js").createEmbed;
 const YouTube = require("../lib/YouTube.js");
 
 /** Voice. */
-const Voice = require("../lib/Voice.js");
+const VoiceHandler = require("../lib/Voice.js");
 
 module.exports = {
   name: "play",
   desc: "Plays a song based on a YouTube URL or query.",
   args: ["{String} song"],
-  exec: ({Emojis, Queue, VoiceHandler, Settings}, Message, Query) => {
+  exec: ({Emojis, Queue, Voice, Settings}, Message, Query) => {
     /**
      * Joins a voice channel and starts playing.
      * 
@@ -37,13 +37,13 @@ module.exports = {
       Message.channel.send(embed);
 
       /** If the bot is not connected to a channel, plays stream. */
-      if (!VoiceHandler.Voice || VoiceHandler.Voice._destroyed) {
-        VoiceHandler.Voice = new Voice(channel, Message.channel, Queue);
+      if (!Voice.Handler || Voice.Handler._destroyed) {
+        Voice.Handler = new VoiceHandler(channel, Message.channel, Queue);
         Message.channel.send(`${Emojis.SUCCESS} Connected to channel ${channel.name}`);
 
         Settings.announcePlaying(Message.channel, elem);
 
-        VoiceHandler.Voice.play(YouTube.ytdl(elem.get("url"), { filter: "audioonly", quality: "highestaudio" }));
+        Voice.Handler.play(YouTube.ytdl(elem.get("url"), { filter: "audioonly", quality: "highestaudio" }));
       }
     }
 
