@@ -8,5 +8,5 @@ module.exports = (Client) => {
   console.log("INFO: Client logged in.");
   updateActivity(Client).then(presence => {
     console.log("INFO: Activity set.");
-  }).catch(err => console.error(err));
+  }).catch(console.error);
 };

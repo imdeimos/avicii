@@ -42,7 +42,7 @@ fs.readdir("./commands/", (err, files) => {
   const commands = files.filter(file => file.split('.').pop() === "js");
 
   if (commands.length === 0) {
-    return console.log(`ERROR: No commands found.`);
+    return console.error(`ERROR: No commands found.`);
   }
 
   console.log(`INFO: Loading ${commands.length} commands ...`);
@@ -100,13 +100,15 @@ Client.on("message", Message => {
    * Each command part is given an array of dependencies objects (Client, Queue ...), the Message instance and the arguments array.
    */
 
+  const c = Client.Commands.get(Name);
+
   /** Check if name is correct. */
-  if (!Client.Commands.get(Name)) {
+  if (!c) {
     return Message.channel.send(`${Emojis.FAILURE} Unknown command **${Name}**, check **${PREFIX}help** for a list of commands.`);
   }
 
   /** Call command. */
-  Client.Commands.get(Name).exec({Client, Emojis, packageJSON, Queue, Settings, Voice}, Message, Args);
+  c.exec({Client, Emojis, packageJSON, Queue, Settings, Voice}, Message, Args);
 });
 
 /** Login the bot with all our events binded. */
