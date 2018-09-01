@@ -20,12 +20,9 @@ const Settings = new (require("./lib/Settings.js"))();
 const PREFIX = Settings.get("PREFIX");
 
 /** Queue system. */
-const Queue = new (require("./lib/Queue.js").Queue)();
+const Queue = require("./lib/Queue.js").Queue;
 
-/** Voice is an object, so that commands could use its properties. */
-let Voice = {
-  Handler: null
-};
+const updateActivity = require("./lib/Utils.js").updateActivity;
 
 /**
  * === COMMAND HANDLER ===
@@ -42,7 +39,7 @@ fs.readdir("./commands/", (err, files) => {
   const commands = files.filter(file => file.split('.').pop() === "js");
 
   if (commands.length === 0) {
-    return console.log(`ERROR: No commands found.`);
+    return console.error(`ERROR: No commands found.`);
   }
 
   console.log(`INFO: Loading ${commands.length} commands ...`);
@@ -67,12 +64,53 @@ fs.readdir("./commands/", (err, files) => {
 fs.readdir("./events/", (err, files) => {
   if (err) return console.error(err);
 
+  /** Filter only .js files. */
+  const events = files.filter(file => file.split('.').pop() === "js");
+
+  if (events.length === 0) {
+    return console.error(`ERROR: No events found.`);
+  }
+
+  console.log(`\nINFO: Loading ${events.length} events ...`);
+
   files.forEach(file => {
     let func = require(`./events/${file}`);
     let name = file.split(".")[0];
 
+    console.log(`INFO: Loaded ${file}`);
+
     /** Bind the event to the client. */
     Client.on(name, (...args) => func(Client, ...args));
+  });
+  console.log(`INFO: All events are loaded successfully !\n`);
+});
+
+/**
+ * When the bot is connected to the Discord API.
+ */
+Client.on("ready", () => {
+  console.log("INFO: Client logged in.");
+  updateActivity(Client).then(presence => {
+    console.log("INFO: Activity set.");
+  }).catch(console.error);
+
+  /**
+   * === SERVERS ===
+   */
+
+  /** Bind to each guild a unique Queue and Voice instance. */
+  Client.guilds.filter(e => e.available).forEach((guild, id) => {
+    /**
+     * The queue for each server.
+     * @type {Queue}
+     */
+    guild.Queue = new Queue();
+
+    /**
+     * The voice handler.
+     * @type {?VoiceHandler}
+     */
+    guild.Voice = null;
   });
 });
 
@@ -82,7 +120,7 @@ fs.readdir("./events/", (err, files) => {
  */
 Client.on("message", Message => {
   /** Filter only valid commands. */
-  if (!Message.content.startsWith(PREFIX) || Message.author.bot) return;
+  if (!Message.content.startsWith(PREFIX) || Message.author.bot || !Message.guild) return;
 
   /** Decomposes the message to get two parts : name and args. */
   const Args = Message.content.slice(PREFIX.length).split(/ +/g);
@@ -95,18 +133,23 @@ Client.on("message", Message => {
   console.log(`NAME: ${Name}`);
   console.log(`ARGS: ${Args}`);
 
+  /** The server the message was sent in. */
+  const Server = Message.guild;
+
   /**
    * Command code is splitted for easier read and maintenance.
    * Each command part is given an array of dependencies objects (Client, Queue ...), the Message instance and the arguments array.
    */
 
+  const Command = Client.Commands.get(Name);
+
   /** Check if name is correct. */
-  if (!Client.Commands.get(Name)) {
+  if (!Command) {
     return Message.channel.send(`${Emojis.FAILURE} Unknown command **${Name}**, check **${PREFIX}help** for a list of commands.`);
   }
 
   /** Call command. */
-  Client.Commands.get(Name).exec({Client, Emojis, packageJSON, Queue, Settings, Voice}, Message, Args);
+  Command.exec({Client, Emojis, "Guilds": Client.guilds, packageJSON, Settings, Server}, Message, Args);
 });
 
 /** Login the bot with all our events binded. */

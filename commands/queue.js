@@ -3,9 +3,12 @@
  */
 module.exports = {
   name: "queue",
-  desc: "Shows the queue.",
+  desc: "Shows the queue. You can specify the page number as an argument.",
   args: ["{Int} page = 1"],
-  exec: ({Emojis, Queue}, Message, [page = 1]) => {
+  examples: ["**page**\n=> 10 elements", "**page** N\n=> M elements"],
+  exec: ({Emojis, Server}, Message, [page = 1]) => {
+    const Queue = Server.Queue;
+    
     page = Number(page);
 
     if (isNaN(page)) return Message.channel.send(`${Emojis.FAILURE} **queue** expects a valid number !`);

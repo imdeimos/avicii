@@ -5,14 +5,16 @@ const createEmbed = require("../lib/Utils.js").createEmbed;
  */
 module.exports = {
   name: "np",
-  desc: "Show current playing song informations.",
+  desc: "Show current song informations.",
   args: [],
-  exec: ({Emojis, Queue, Voice}, Message, Args) => {
-    if (Voice.Handler._destroyed) {
-      Voice.Handler = null;
+  exec: ({Emojis, Server}, Message, Args) => {
+    const { Queue, Voice } = Server;
+
+    if (Voice._destroyed) {
+      Server.Voice = null;
     }
     
-    if (!Voice.Handler) return Message.channel.send(`${Emojis.WARNING} No song is playing !`);
+    if (!Server.Voice) return Message.channel.send(`${Emojis.WARNING} No song is playing !`);
 
     const elem = Queue.current;
 

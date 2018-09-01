@@ -1,3 +1,6 @@
+/** Queue system. */
+const Queue = require("../lib/Queue.js").Queue;
+
 const updateActivity = require("../lib/Utils.js").updateActivity;
 
 /**
@@ -9,5 +12,9 @@ module.exports = (Client, [Guild]) => {
   console.log(`INFO: Joined the guild ${Guild.name} | ${Guild.memberCount} users.`);
   updateActivity(Client).then(presence => {
     console.log(`INFO: Activity updated.`);
-  }).catch(err => console.error(err));
+  }).catch(console.error);
+
+  /** Initiate queue and voice. */
+  Client.guilds.get(Guild.id).Queue = new Queue();
+  Client.guilds.get(Guild.id).Voice = null;
 };

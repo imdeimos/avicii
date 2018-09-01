@@ -1,6 +1,3 @@
-/**
- * Give credits.
- */
 module.exports = {
   name: "credits",
   desc: "Show bot credits.",

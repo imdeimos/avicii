@@ -5,7 +5,9 @@ module.exports = {
   name: "shuffle",
   desc: "Shuffles the queue.",
   args: [],
-  exec: ({Emojis, Queue}, Message, Args) => {
+  exec: ({Emojis, Server}, Message, Args) => {
+    const Queue = Server.Queue;
+    
     const len = Queue.length;
 
     if (len === 0) {
