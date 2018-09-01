@@ -7,32 +7,36 @@ module.exports = {
   name: "skip",
   desc: "Skips one or more songs.",
   args: ["{Int} n = 1"],
-  exec: ({Emojis, Queue, Voice}, Message, [n = 1]) => {
+  examples: ["**skip**\n=> Skipped !", "**skip** -1\n=> Skipped back 1 songs !"],
+  exec: ({Emojis, Server}, Message, [n = 1]) => {
+    const { Queue, Voice } = Server;
+    
     n = Number(n);
 
     if (isNaN(n)) return Message.channel.send(`${Emojis.FAILURE} **skip** expects an integer.`);
 
-    if (Voice.Handler._destroyed) {
-      Voice.Handler = null;
+    if (Voice._destroyed) {
+      Server.Voice = null;
     }
 
-    if (!Voice.Handler) return Message.channel.send(`${Emojis.WARNING} The bot is not in a voice channel !`);
+    if (!Voice) return Message.channel.send(`${Emojis.WARNING} The bot is not in a voice channel !`);
 
     if (Queue.isEmpty()) return Message.channel.send(`${Emojis.WARNING} The queue is empty !`);
+
+    if (!Queue.current) return Message.channel.send(`${Emojis.WARNING} No song is playing !`);
 
     const pos = Queue.current.get("index") + n;
 
     if (Math.abs(pos) >= Queue.length) {
       /** Out of queue boundaries. */
       Queue.clear();
-      Voice.Handler.destroy();
-      Voice.Handler = null;
-      return Voice.Handler.end() && Message.channel.send(`${Emojis.STOPPED} **Stopped**`);
+      Voice.destroy();
+      Server.Voice = null;
+      return Message.channel.send(`${Emojis.MUSIC_STOP} **Stopped**`);
     }
 
     if (pos < 0) pos += Queue.length;
 
-    /** We need to cancel the autoincrement from `Voice._onend`. */
     Queue.current = pos - 1;
 
     if (n == 1) {
@@ -43,6 +47,6 @@ module.exports = {
       Message.channel.send(`${Emojis.MUSIC_SKIP} **Skipped** ${n} songs`);
     }
 
-    Voice.Handler.end();
+    Voice.end();
   }
 }

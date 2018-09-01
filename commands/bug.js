@@ -1,11 +1,6 @@
-/**
- * Show link to report a bug.
- *
- * @return {String}
- */
 module.exports = {
   name: "bug",
-  desc: "Sends link to report a bug.",
+  desc: "Shows link to report a bug.",
   args: [],
   exec: ({Emojis, packageJSON}, Message, Args) => {
     let link = packageJSON.bugs.url;

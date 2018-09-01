@@ -10,7 +10,8 @@ module.exports = {
   name: "search",
   desc: "Searches on YouTube for a query.",
   args: ["{String} query"],
-  exec: ({Emojis}, Message, Query) => {
+  examples: ["**search** avicii\n=> 10 elements", "**play** <number>\n=> Playing Avicii - Wake me up !"],
+  exec: ({Client, Emojis}, Message, Query) => {
     Query = Query.join(" ");
 
     if (!Query) {
@@ -30,8 +31,11 @@ module.exports = {
         m.embed.description = "None.";
       } else {
         res.forEach((e, i) => {
-          m.embed.description += `\`${i}\` ${e.title} | [Link](${e.url})`;
+          m.embed.description += `\n\`${i}\` ${e.title} | [Link](${e.url})`;
         });
+
+        /** Add it as a property to the client object, for the play command. */
+        Client.guilds.get(Message.guild.id).SearchResults = res;
       }
       Message.channel.send(m);
     }).catch(err => Message.channel.send(`${Emojis.FAILURE} Error: Unable to get search results.`) && console.error(err));

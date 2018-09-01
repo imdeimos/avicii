@@ -7,7 +7,8 @@ module.exports = {
   name: "help",
   desc: "Returns a list of command or details on how to use specific command.",
   args: ["{String} name = *"],
-  exec: ({Client, Emojis, Queue, Settings}, Message, [name = "*"]) => {
+  examples: ["**help**\n=> List of commands", "**help** play\n=> Adds an element to the queue."],
+  exec: ({Client, Emojis, Settings}, Message, [name = "*"]) => {
     const Commands = Client.Commands;
 
     if (name == "*") {
@@ -43,6 +44,14 @@ module.exports = {
           ]
         }
       };
+
+      if (command.examples) {
+        embed.embed.fields.push({
+          "name": "Examples",
+          "value": command.examples.map(e => `• ${e}\n`).join("")
+        });
+      }
+      
       Message.channel.send(embed);
     }
   }

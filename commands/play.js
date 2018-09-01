@@ -11,7 +11,9 @@ module.exports = {
   name: "play",
   desc: "Plays a song based on a YouTube URL or query.",
   args: ["{String} song"],
-  exec: ({Emojis, Queue, Voice, Settings}, Message, Query) => {
+  exec: ({Emojis, Server, Settings}, Message, Query) => {
+    const { Queue, Voice } = Server; 
+    
     /**
      * Joins a voice channel and starts playing.
      * 
@@ -37,13 +39,13 @@ module.exports = {
       Message.channel.send(embed);
 
       /** If the bot is not connected to a channel, plays stream. */
-      if (!Voice.Handler || Voice.Handler._destroyed) {
-        Voice.Handler = new VoiceHandler(channel, Message.channel, Queue);
+      if (!Voice || Voice._destroyed) {
+        Server.Voice = new VoiceHandler(channel, Message.channel, Queue);
         Message.channel.send(`${Emojis.SUCCESS} Connected to channel ${channel.name}`);
 
         Settings.announcePlaying(Message.channel, elem);
 
-        Voice.Handler.play(YouTube.ytdl(elem.get("url"), { filter: "audioonly", quality: "highestaudio" }));
+        Server.Voice.play(YouTube.ytdl(elem.get("url"), { filter: "audioonly", quality: "highestaudio" }));
       }
     }
 
@@ -64,22 +66,41 @@ module.exports = {
      * --~> Playlists (not implemented)
      * --~> Videos
      * ~> Queries
+     * ~> Search result number
      */
-    
-    Message.channel.send(`${Emojis.SEARCH} Searching for \`${Query.join(" ")}\` ...`);
+    Query = Query.join(" ");
 
-    if (YouTube.validateURL(Query[0])) {
+    if (YouTube.validateURL(Query)) {
       /** URLs. */
-      YouTube.getVideo(Query[0]).then(info => {
+      Message.channel.send(`${Emojis.SEARCH} Searching for \`${Query}\` ...`);
+
+      YouTube.getVideo(Query).then(info => {
         Queue.push(info);
         joinChannel(VoiceChannel);
       }).catch(err => Message.channel.send(`${Emojis.FAILURE} Error: Unable to retrieve video information.`) && console.error(err));
     } else {
-      /** Queries. */
-      YouTube.search(Query.join(" "), 1).then(info => {
-        Queue.push(info[0]);
-        joinChannel(VoiceChannel);
-      }).catch(err => Message.channel.send(`${Emojis.FAILURE} Error: Unable to retrieve video information.`) && console.error(err));
+      if (!Number.isNaN(Number(Query))) {
+        /** Search result number. */
+        const res = Server.SearchResults;
+
+        if (!res) return Message.channel.send(`${Emojis.WARNING} Invalid argument, must be either **a query or a correct YouTube URL**.`);
+
+        Message.channel.send(`${Emojis.SEARCH} Playing the search result N°\`${Query}\` ...`);
+
+        YouTube.getVideo(res[Query].url).then(info => {
+          Queue.push(info);
+          joinChannel(VoiceChannel);
+          delete Server.SearchResults;
+        }).catch(err => Message.channel.send(`${Emojis.FAILURE} Error: Unable to retrieve video information.`) && console.error(err));
+      } else {
+        /** Queries. */
+        Message.channel.send(`${Emojis.SEARCH} Searching for \`${Query}\` ...`);
+
+        YouTube.search(Query, 1).then(info => {
+          Queue.push(info[0]);
+          joinChannel(VoiceChannel);
+        }).catch(err => Message.channel.send(`${Emojis.FAILURE} Error: Unable to retrieve video information.`) && console.error(err));
+      }
     }
   }
 }

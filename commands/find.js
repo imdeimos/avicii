@@ -8,8 +8,13 @@ module.exports = {
   name: "find",
   desc: "Finds items in the queue that matches the specified pattern. For more information on patterns, see [the MDN documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Writing_a_regular_expression_pattern).",
   args: ["{RegExp} pattern"],
-  exec: ({Emojis, Queue}, Message, Pattern) => {
+  examples: ["**find** trap\n=> 42 results"],
+  exec: ({Server}, Message, Pattern) => {
+    const Queue = Server.Queue;
+
+    /** Pattern is the args array, so we need to join it. */
     Pattern = Pattern.join(" ");
+
     let m = {
       embed: {
         color: 0xff0000,
@@ -18,7 +23,8 @@ module.exports = {
       }
     }
 
-    Pattern = new RegExp(Pattern);
+    /** Convert it to RegExp. */
+    Pattern = new RegExp(Pattern, "i");
 
     const results = Queue.filter(e => Pattern.test(e.get("title")));
 

@@ -1,2 +1,7 @@
+# 0.2.0
+- Added the `find` and `search` commands.
+- Added support for servers queue.
+- Added examples for commands help.
+
 # 0.1.0
 - Initial release !

@@ -5,7 +5,9 @@ module.exports = {
   name: "upnext",
   desc: "Get the songs enqueued after the current one.",
   args: [],
-  exec: ({Emojis, Queue}, Message, Args) => {
+  exec: ({Emojis, Server}, Message, Args) => {
+    const Queue = Server.Queue;
+    
     const len = Queue.length;
 
     if (len === 0) return Message.channel.send(`${Emojis.WARNING} The queue is empty !`);

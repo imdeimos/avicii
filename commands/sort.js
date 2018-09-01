@@ -7,8 +7,12 @@ module.exports = {
   name: "sort",
   desc: "Sorts all songs, ascending (<) or descending (>).",
   args: ["{Char} order = <"],
-  exec: ({Emojis, Queue}, Message, Args) => {
-    Args[0] = Args[0] || '<';
+  exec: ({Emojis, Server}, Message, [order]) => {
+    const Queue = Server.Queue;
+
+    if (!order || (order !== '<' && order !== '>')) {
+      return Message.channel.send(`${Emojis.WARNING} Invalid argument, must be either **<** or **>**.`);
+    }
 
     const len = Queue.length;
 
@@ -16,7 +20,7 @@ module.exports = {
       return Message.channel.send(`${Emojis.WARNING} The queue is empty !`);
     }
 
-    Queue.sort(Args[0] == '<');
+    Queue.sort(order == '<');
     Message.channel.send(`${Emojis.SUCCESS} **Sorted** ${len} elements`);
   }
 }
