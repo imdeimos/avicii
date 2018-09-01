@@ -35,25 +35,23 @@ Client.Commands = new Discord.Collection();
 fs.readdir("./commands/", (err, files) => {
   if (err) return console.error(err);
 
-  /** Filter only .js files. */
-  const commands = files.filter(file => file.split('.').pop() === "js");
-
-  if (commands.length === 0) {
+  if (files.length === 0) {
     return console.error(`ERROR: No commands found.`);
   }
 
-  console.log(`INFO: Loading ${commands.length} commands ...`);
+  files.forEach(file => {
+    /** Filter only .js files. */
+    if (!file.endsWith(".js")) return;
 
-  commands.forEach(command => {
-    let object = require(`./commands/${command}`);
-    let name = command.split(".")[0];
+    let object = require(`./commands/${file}`);
+    let name = file.split(".")[0];
 
-    console.log(`INFO: Loaded ${command}`);
+    console.log(`INFO: Loaded ${file}`);
 
     /** Push the function to the Commands object. */
     Client.Commands.set(name, object);
   });
-  console.log(`INFO: All commands are loaded successfully !`);
+  console.log(`INFO: All commands are loaded successfully !\n`);
 });
 
 /**
@@ -64,54 +62,24 @@ fs.readdir("./commands/", (err, files) => {
 fs.readdir("./events/", (err, files) => {
   if (err) return console.error(err);
 
-  /** Filter only .js files. */
-  const events = files.filter(file => file.split('.').pop() === "js");
-
-  if (events.length === 0) {
+  if (files.length === 0) {
     return console.error(`ERROR: No events found.`);
   }
 
-  console.log(`\nINFO: Loading ${events.length} events ...`);
-
   files.forEach(file => {
-    let func = require(`./events/${file}`);
-    let name = file.split(".")[0];
+    /** Filter only .js files. */
+    if(!file.endsWith(".js")) return;
+
+    const event = require(`./events/${file}`);
+    const name = file.split(".")[0];
 
     console.log(`INFO: Loaded ${file}`);
 
     /** Bind the event to the client. */
-    Client.on(name, (...args) => func(Client, ...args));
+    Client.on(name, event.bind(null, Client));
+    delete require.cache[require.resolve(`./events/${file}`)];
   });
   console.log(`INFO: All events are loaded successfully !\n`);
-});
-
-/**
- * When the bot is connected to the Discord API.
- */
-Client.on("ready", () => {
-  console.log("INFO: Client logged in.");
-  updateActivity(Client).then(presence => {
-    console.log("INFO: Activity set.");
-  }).catch(console.error);
-
-  /**
-   * === SERVERS ===
-   */
-
-  /** Bind to each guild a unique Queue and Voice instance. */
-  Client.guilds.filter(e => e.available).forEach((guild, id) => {
-    /**
-     * The queue for each server.
-     * @type {Queue}
-     */
-    guild.Queue = new Queue();
-
-    /**
-     * The voice handler.
-     * @type {?VoiceHandler}
-     */
-    guild.Voice = null;
-  });
 });
 
 /**
