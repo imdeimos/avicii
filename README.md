@@ -1,4 +1,4 @@
-# avicii.js
+# avicii
 
 > A featureful music bot for Discord servers.
 
